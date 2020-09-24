@@ -7,7 +7,8 @@ import reqwest from 'reqwest';
 class Demo extends React.Component {
   state = {
     fileList: [],
-    uploading: false
+    uploading: false,
+    type: 0,
   };
 
   // static getDerivedStateFromProps(nextProps) {
@@ -19,8 +20,12 @@ class Demo extends React.Component {
   // }
 
   handleUpload = () => {
-    const { fileList } = this.state;
-    
+    const { fileList, type } = this.state;
+    if (!type) {
+      message.error('请选择停复牌类型！');
+      return;
+    }
+
     this.setState({
       uploading: true,
     });
@@ -33,8 +38,9 @@ class Demo extends React.Component {
 
     var formdata = new FormData();
     formdata.append('Other', fileList[0]);
+    formdata.append('Type', type);
 
-    fetch(`${host}/tradecenter/shares/markettime/batch/modify`, {
+    fetch(`${host}/tradecenter/shares/suspensionstatus/batch/modify`, {
       method: 'POST',
       headers: myHeaders,
       body: formdata,
@@ -59,6 +65,10 @@ class Demo extends React.Component {
 
   handleSelectType = (value) => {
     console.log(value);
+
+    this.setState({
+      type: value,
+    });
   };
 
 
@@ -89,12 +99,24 @@ class Demo extends React.Component {
 
     return (
       <Modal
-        title="导入上市时间数据"
+        title="导入停/复牌数据"
         visible={modalVisible}
         onCancel={() => onCancel()}
         footer={null}
         width={600}
       >
+        <Space>
+          类型：
+          <Select
+            onChange={this.handleSelectType}
+            placeholder="请选择停复牌类型"
+            style={{ width: 200, marginRight: 10 }}
+          >
+            <Select.Option value={1}>停牌</Select.Option>
+            <Select.Option value={2}>复牌</Select.Option>
+          </Select>
+        </Space>
+
         <Upload {...props}>
           <Button>
             <UploadOutlined /> 选择文件

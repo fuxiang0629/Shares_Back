@@ -1,6 +1,6 @@
 import { ReloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Divider, Switch, message, Popconfirm } from 'antd';
-import {history} from 'umi';
+import { history } from 'umi';
 import React, { useState, useRef } from 'react';
 import ProTable from '@ant-design/pro-table';
 import CreateDealRuleForm from './components/CreateDealRuleForm';
@@ -10,15 +10,20 @@ import UpdateDealRuleForm from './components/UpdateDealRuleForm';
 import UpdateDealDateForm from './components/UpdateDealDateForm';
 
 import {
-  queryTradeLeverList,
-  addTradeLever,
-  modifyTradeLever,
-  deleteTradeLever,
-  queryDealDateGroupList,
-  addDealDateGroup,
-  updateDealDateGroup,
-  removeDealDateGroup,
-  updateDealTimeGroup,
+  queryTraderulesList,
+  addTraderules,
+  modifyTraderules,
+  modifyTraderulesStatus,
+  deleteTraderules,
+  queryPositionRulesList,
+  addPositionRules,
+  modifyPositionRules,
+  modifyPositionRulesStatus,
+  deletePositionRules,
+  queryRiskRulesList,
+  modifyRiskRules,
+  modifyRiskRulesForbidStatus,
+  modifyRiskRulesStatus,
 } from './service';
 
 /**
@@ -29,27 +34,9 @@ import {
 const handleAdd = async (type, values) => {
   const hide = message.loading('正在添加');
   try {
-    !type ? await addTradeLever({ ...values }) : await addDealDateGroup({ ...values });
+    type == 1 ? await addTraderules({ ...values }) : await addPositionRules({ ...values });
     hide();
     message.success('添加成功');
-    return true;
-  } catch (error) {
-    hide();
-    return false;
-  }
-};
-
-/**
- * 更新交易时间
- * @param {*} type
- * @param {*} values
- */
-const handleUpdateDealTime = async (values) => {
-  const hide = message.loading('正在更新');
-  try {
-    await updateDealTimeGroup({ ...values });
-    hide();
-    message.success('更新成功');
     return true;
   } catch (error) {
     hide();
@@ -65,7 +52,11 @@ const handleUpdateDealTime = async (values) => {
 const handleUpdate = async (type, values) => {
   const hide = message.loading('正在更新');
   try {
-    !type ? await modifyTradeLever({ ...values }) : await updateDealDateGroup({ ...values });
+    type == 1
+      ? await modifyTraderules({ ...values })
+      : type == 2
+      ? await modifyPositionRules({ ...values })
+      : await modifyRiskRules({ ...values });
     hide();
     message.success('正在更新');
     return true;
@@ -83,11 +74,11 @@ const handleRemove = async (type, row) => {
   const hide = message.loading('正在删除');
   if (!row) return true;
   try {
-    !type
-      ? await deleteTradeLever({
+    type == 1
+      ? await deleteTraderules({
           Id: row.Id,
         })
-      : await removeDealDateGroup({
+      : await deletePositionRules({
           Id: row.Id,
         });
 
@@ -98,6 +89,38 @@ const handleRemove = async (type, row) => {
     hide();
     return false;
   }
+};
+
+/**
+ * 更新状态
+ * @param {*} row
+ */
+const handleUpdateStatus = async (state, row) => {
+  type == 1
+    ? await modifyTraderulesStatus({
+        Id: row.Id,
+        Status: state ? 1 : 2,
+      })
+    : type == 2
+    ? await modifyPositionRulesStatus({
+        Id: row.Id,
+        Status: state ? 1 : 2,
+      })
+    : await modifyRiskRulesStatus({
+        Id: row.Id,
+        Status: state ? 1 : 2,
+      });
+};
+
+/**
+ * 更新风控禁止状态
+ * @param {*} row
+ */
+const handleUpdateForbidStatus = async (state, row) => {
+  await modifyRiskRulesForbidStatus({
+    Id: row.Id,
+    Status: state,
+  });
 };
 
 const TableList = () => {
@@ -121,12 +144,27 @@ const TableList = () => {
       hideInSearch: true,
     },
     {
-      title: '名称',
-      dataIndex: 'MarketName',
+      title: '股票关键字',
+      dataIndex: 'LimitKey',
       hideInForm: true,
     },
     {
-      title: '市场',
+      title: '股票类型',
+      dataIndex: 'LimitType',
+      valueEnum: {
+        0: {
+          text: '全部',
+        },
+        1: {
+          text: '股票代码',
+        },
+        2: {
+          text: '股票名称',
+        },
+      },
+    },
+    {
+      title: '限制市场代码',
       dataIndex: 'LimitMarket',
       hideInSearch: true,
       valueEnum: {
@@ -140,12 +178,6 @@ const TableList = () => {
           text: '上海',
         },
       },
-    },
-    {
-      title: '关键词',
-      dataIndex: 'LimitKey',
-      hideInForm: true,
-      hideInSearch: true,
     },
     {
       title: '优先级',
@@ -164,6 +196,44 @@ const TableList = () => {
       dataIndex: 'FundMultiple',
       hideInForm: true,
       hideInSearch: true,
+    },
+    {
+      title: '警戒线（1/万）',
+      dataIndex: 'Cordon',
+      hideInForm: true,
+      hideInSearch: true,
+    },
+    {
+      title: '平仓线（1/万）',
+      dataIndex: 'ClosingLine',
+      hideInForm: true,
+      hideInSearch: true,
+    },
+    {
+      title: '状态',
+      dataIndex: 'Status',
+      hideInForm: true,
+      hideInSearch: true,
+      valueEnum: {
+        1: {
+          text: '开启',
+        },
+        2: {
+          text: '关闭',
+        },
+      },
+      render: (_, record) => (
+        <>
+          <Switch
+            checkedChildren="开启"
+            unCheckedChildren="关闭"
+            defaultChecked={record.Status === 1 ? true : false}
+            onChange={(state) => {
+              handleUpdateStatus(state, record);
+            }}
+          />
+        </>
+      ),
     },
     {
       title: '创建时间',
@@ -203,6 +273,19 @@ const TableList = () => {
           >
             <a style={{ color: '#F42708' }}>删除</a>
           </Popconfirm>
+          <Divider type="vertical" />
+          <a
+            onClick={() => {
+              history.push({
+                pathname: `/trading/deal/liquidation/额外平仓线-${record.LimitKey}`,
+                query: {
+                  Id: record.Id,
+                },
+              });
+            }}
+          >
+            额外平仓线
+          </a>
         </>
       ),
     },
@@ -215,12 +298,12 @@ const TableList = () => {
       hideInSearch: true,
     },
     {
-      title: '名称',
+      title: '市场名称',
       dataIndex: 'MarketName',
       hideInForm: true,
     },
     {
-      title: '市场',
+      title: '限制市场代码',
       dataIndex: 'LimitMarket',
       hideInSearch: true,
       valueEnum: {
@@ -235,6 +318,7 @@ const TableList = () => {
         },
       },
     },
+
     {
       title: '关键词',
       dataIndex: 'LimitKey',
@@ -428,7 +512,7 @@ const TableList = () => {
           setting: false,
           density: false,
         }}
-        headerTitle="涨跌幅/杠杆"
+        headerTitle="交易规则"
         actionRef={actionRef}
         rowKey="Id"
         toolBarRender={() => [
@@ -454,7 +538,7 @@ const TableList = () => {
           </Button>,
         ]}
         request={(params, sorter, filter) =>
-          queryTradeLeverList({ ...params, sorter, filter }).then((res) => {
+          queryDealRuleList({ ...params, sorter, filter }).then((res) => {
             const result = {
               data: res.Data.List,
               total: res.Data.TotalCount,
@@ -520,8 +604,8 @@ const TableList = () => {
             handleUpdateModalVisible(false);
             setFormValues({});
 
-            if (actionRef.current) {
-              actionRef.current.reload();
+            if (actionRef1.current) {
+              actionRef1.current.reload();
             }
           }
         }}

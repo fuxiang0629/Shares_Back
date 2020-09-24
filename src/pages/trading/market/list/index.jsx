@@ -82,6 +82,11 @@ const TableList = () => {
       hideInForm: true,
     },
     {
+      title: '上市时间',
+      dataIndex: 'MarketTime',
+      hideInSearch: true,
+    },
+    {
       title: '状态',
       dataIndex: 'Status',
       hideInSearch: true,
@@ -94,24 +99,6 @@ const TableList = () => {
             defaultChecked={record.Status === 1 ? true : false}
             onChange={(state) => {
               handleUpdateStockStatus(state, record);
-            }}
-          />
-        </>
-      ),
-    },
-    {
-      title: '是否停牌',
-      dataIndex: 'IsSuspension',
-      hideInSearch: true,
-      hideInForm: true,
-      render: (_, record) => (
-        <>
-          <Switch
-            checkedChildren="是"
-            unCheckedChildren="否"
-            defaultChecked={record.IsSuspension}
-            onChange={(state) => {
-              handleUpdateStockSuspensionStatus(state, record);
             }}
           />
         </>
@@ -200,7 +187,7 @@ const TableList = () => {
       hideInSearch: true,
       render: (_, record) => (
         <>
-          <span>{record.SharesQuotes ? record.SharesQuotes.Rise : '-'}</span>
+          <span>{record.SharesQuotes ? record.SharesQuotes.Rise + '%' : '-'}</span>
         </>
       ),
     },
@@ -253,8 +240,13 @@ const TableList = () => {
         }}
         headerTitle={false}
         toolBarRender={() => [
-          <Button type="primary" onClick={() => handleUploadModalVisible(true)}>
-            <PlusOutlined /> 批量导入停/复牌数据
+          <Button
+            type="primary"
+            onClick={() => {
+              handleUploadModalVisible(true);
+            }}
+          >
+            <PlusOutlined /> 导入上市时间数据
           </Button>,
 
           <Button

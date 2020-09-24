@@ -275,6 +275,12 @@ export const route = [
                 path: '/trading/market/list',
                 component: './trading/market/list',
               },
+              {
+                name: '停牌列表',
+                icon: 'form',
+                path: '/trading/market/suspension',
+                component: './trading/market/suspension',
+              },
             ],
           },
           {
@@ -305,6 +311,12 @@ export const route = [
                 icon: 'form',
                 path: '/trading/deal/rule',
                 component: './trading/deal/rule',
+              },
+              {
+                name: '风控规则',
+                icon: 'form',
+                path: '/trading/deal/risk',
+                component: './trading/deal/risk',
               },
               {
                 name: '额外平仓线',
@@ -468,6 +480,12 @@ export const route = [
                 icon: 'form',
                 path: '/system/account/list',
                 component: './system/account/list',
+              },
+              {
+                name: '账户持仓',
+                icon: 'form',
+                path: '/system/account/position',
+                component: './system/account/position',
               },
               {
                 name: '券商列表',

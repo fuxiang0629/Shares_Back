@@ -1,74 +1,53 @@
 import request from '@/utils/request';
 
-
 /**
- * 查询交易规则列表
+ * 查询交易杠杆列表
  * @param {*} params 
  */
-export async function queryDealRuleList(params) {
-  const { current, pageSize, LimitKey, SharesType } = params
+export async function queryTradeLeverList(params) {
+  const { current, pageSize } = params
   const payload = {
     PageIndex: current,
     PageSize: pageSize,
-    SharesKey: LimitKey,
-    SharesType
   }
-  return request('/api/tradecenter/shares/traderules/list', {
+  return request('/api/tradecenter/shares/tradelever/list', {
     method: 'POST',
     data: payload,
   });
 }
 
-
 /**
- * 添加交易规则列表
+ * 添加交易杠杆
  * @param {*} params 
  */
-export async function addDealRule(params) {
-  return request('/api/tradecenter/shares/traderules/add', {
+export async function addTradeLever(params) {
+  return request('/api/tradecenter/shares/tradelever/add', {
     method: 'POST',
     data: params,
   });
 }
 
-
 /**
- * 删除交易规则
+ * 编辑交易杠杆
  * @param {*} params 
  */
-export async function removeDealRule(params) {
-  return request('/api/tradecenter/shares/traderules/delete', {
+export async function modifyTradeLever(params) {
+  return request('/api/tradecenter/shares/tradelever/modify', {
     method: 'POST',
     data: params,
   });
 }
 
-
 /**
- * 修改交易规则状态
+ * 删除交易杠杆
  * @param {*} params 
  */
-export async function updateDealRuleStatus(params) {
-  return request('/api/tradecenter/shares/traderules/status/modify', {
+export async function deleteTradeLever(params) {
+  return request('/api/tradecenter/shares/tradelever/delete', {
     method: 'POST',
     data: params,
   });
 }
-
-
-
-/**
- * 修改交易规则
- * @param {*} params 
- */
-export async function updateDealRule(params) {
-  return request('/api/tradecenter/shares/traderules/modify', {
-    method: 'POST',
-    data: params,
-  });
-}
-
-
 
 /**
  * 查询交易时间分组列表

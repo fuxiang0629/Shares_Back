@@ -2,13 +2,13 @@ import { Button, Form, Input, Modal, Select } from 'antd';
 import React from 'react';
 
 const CreateDealDateForm = (props) => {
-  const { updateModalVisible, onCancel, handleUpdate, values } = props;
-  if (!updateModalVisible) return null;
+  const { modalVisible, onCancel, handleAdd } = props;
+  if (!modalVisible) return null;
   return (
     <Modal
       destroyOnClose
-      title="编辑交易时间分组"
-      visible={updateModalVisible}
+      title="添加交易时间分组"
+      visible={modalVisible}
       onCancel={() => onCancel()}
       footer={null}
       width={600}
@@ -17,18 +17,15 @@ const CreateDealDateForm = (props) => {
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 18 }}
         layout="horizontal"
-        onFinish={handleUpdate}
-        initialValues={{
-          ...values,
-        }}
+        onFinish={handleAdd}
       >
         <Form.Item
           name="MarketName"
-          label="名称"
+          label="市场名称"
           rules={[
             {
               required: true,
-              message: '请输入名称!',
+              message: '请输入市场名称!',
             },
           ]}
         >
@@ -36,12 +33,12 @@ const CreateDealDateForm = (props) => {
         </Form.Item>
 
         <Form.Item
-          label="市场"
+          label="市场代码"
           name="LimitMarket"
           rules={[
             {
               required: true,
-              message: '请选择市场!',
+              message: '请选择市场代码!',
             },
           ]}
         >
@@ -61,10 +58,6 @@ const CreateDealDateForm = (props) => {
             },
           ]}
         >
-          <Input />
-        </Form.Item>
-
-        <Form.Item label="Id" name="Id" hidden={true}>
           <Input />
         </Form.Item>
 

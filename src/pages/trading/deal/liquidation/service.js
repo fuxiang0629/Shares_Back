@@ -7,7 +7,7 @@ import request from '@/utils/request';
  */
 export async function queryDealRuleLiquidationList(params) {
 
-  console.log("查询交易规则额外平仓线列表")
+  console.log(params)
   const { current, pageSize, Id} = params
   const payload = {
     PageIndex: current,

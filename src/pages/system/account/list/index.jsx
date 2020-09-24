@@ -1,6 +1,7 @@
 import { ReloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Divider, Switch, Menu, message, Popconfirm } from 'antd';
 import React, { useState, useRef } from 'react';
+import { history } from 'umi';
 import ProTable from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
@@ -116,6 +117,21 @@ const TableList = () => {
       hideInSearch: true,
     },
     {
+      title: '深市股东代码',
+      dataIndex: 'Holder0',
+      hideInSearch: true,
+    },
+    {
+      title: '沪市股东代码',
+      dataIndex: 'Holder1',
+      hideInSearch: true,
+    },
+    {
+      title: '初始资金',
+      dataIndex: 'InitialFunding',
+      hideInSearch: true,
+    },
+    {
       title: '交易密码',
       dataIndex: 'JyPassword',
       valueType: 'text',
@@ -187,6 +203,19 @@ const TableList = () => {
       fixed: 'right',
       render: (_, record) => (
         <>
+          <a
+            onClick={() => {
+              history.push({
+                pathname: '/system/account/position',
+                query: {
+                  AccountCode: record.AccountCode,
+                },
+              });
+            }}
+          >
+            持仓信息
+          </a>
+          <Divider type="vertical" />
           <a
             onClick={() => {
               setFormValues(record);

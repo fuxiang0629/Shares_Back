@@ -21,11 +21,11 @@ const CreateDealDateForm = (props) => {
       >
         <Form.Item
           name="MarketName"
-          label="市场名称"
+          label="名称"
           rules={[
             {
               required: true,
-              message: '请输入市场名称!',
+              message: '请输入名称!',
             },
           ]}
         >
@@ -33,12 +33,12 @@ const CreateDealDateForm = (props) => {
         </Form.Item>
 
         <Form.Item
-          label="市场代码"
+          label="市场"
           name="LimitMarket"
           rules={[
             {
               required: true,
-              message: '请选择市场代码!',
+              message: '请选择市场!',
             },
           ]}
         >
